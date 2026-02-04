@@ -1,0 +1,158 @@
+﻿@model StudentManagement.Models.Student
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background: #f4f6f9;
+    }
+
+    .form-container {
+        width: 450px;
+        margin: 40px auto;
+        background: white;
+        padding: 25px;
+        border-radius: 10px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            /* color: #333; */
+            color: #7b2cbf;
+        }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+            .form-group input:focus,
+            .form-group select:focus {
+                outline: none;
+                border-color: #7b2cbf;
+            }
+
+    .btn-save {
+        width: 100%;
+        padding: 12px;
+        background: #7b2cbf;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+        .btn-save:hover {
+            background: #7b2cbf;
+        }
+</style>
+
+<div class="form-container">
+    <div class="header">
+        <h2>Update Student</h2>
+    </div>
+
+<form method="post">
+    <input type="hidden" name="StudentId" value="@Model.StudentId" />
+
+        <div class ="form-group">
+            <input name="FirstName" value="@Model.FirstName" />
+        </div>
+
+        <div class="form-group">
+        <input class="form-group" name="LastName" value="@Model.LastName" />
+        </div>
+
+         <div class="form-group">
+        <input class="form-group"  name="Age" value="@Model.Age" />
+        </div>
+
+        <div class="form-group">
+        <input class="form-group"  name="Email" value="@Model.Email" />
+        </div>
+
+        <div class="form-group">
+        <select class="form-group" name="CountryId" id="CountryId">
+        @foreach (var c in ViewBag.Country)
+        {
+            if (c.Value == Model.CountryId.ToString())
+            {
+                <option value="@c.Value" selected="selected">@c.Text</option>
+            }
+            else
+            {
+                <option value="@c.Value">@c.Text</option>
+            }
+        }
+    </select>
+        </div>
+
+        <div class="form-group">
+        <select class="form-group" name="StateId" id="StateId">
+        @foreach (var s in ViewBag.State)
+        {
+            if (s.Value == Model.StateId.ToString())
+            {
+                <option value="@s.Value" selected="selected">@s.Text</option>
+            }
+            else
+            {
+                <option value="@s.Value">@s.Text</option>
+            }
+        }
+    </select>
+        </div>
+
+        <div class="form-group">
+        <select class="form-group" name="CityId" id="CityId">
+        @foreach (var c in ViewBag.City)
+        {
+            if (c.Value == Model.CityId.ToString())
+            {
+                <option value="@c.Value" selected="selected">@c.Text</option>
+            }
+            else
+            {
+                <option value="@c.Value">@c.Text</option>
+            }
+        }
+    </select>
+        </div>
+
+        <button class="btn-save">Update</button>
+</form>
+</div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $("#CountryId").change(function () {
+            $.get("/Student/GetState", { id: this.value }, function (d) {
+                $("#StateId").empty().append('<option value="">Select State</option>');
+                $("#CityId").empty().append('<option value="">Select City</option>');
+                $.each(d, function (i, v) {
+                    $("#StateId").append(`<option value="${v.value}">${v.text}</option>`);
+                });
+            });
+        });
+
+        $("#StateId").change(function () {
+            $.get("/Student/GetCity", { id: this.value }, function (d) {
+                $("#CityId").empty().append('<option value="">Select City</option>');
+                $.each(d, function (i, v) {
+                    $("#CityId").append(`<option value="${v.value}">${v.text}</option>`);
+                });
+            });
+        });
+    </script>
+
